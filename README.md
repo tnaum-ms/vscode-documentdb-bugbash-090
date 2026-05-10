@@ -3,8 +3,9 @@
 ### 0. Prerequisites:
 
 1. VS Code installed on your machine
-2. Access to a Kubernetes cluster (AKS, EKS, GKE, k3d, minikube, Docker Desktop, etc.) with a DocumentDB-compatible workload.
-> 📎 If you don't have a cluster, we'll share access credentials for testing with you
+2. `kubectl` installed and on your `PATH` ([install guide](https://kubernetes.io/docs/tasks/tools/))
+3. Azure CLI `az` installed ([install guide](https://learn.microsoft.com/cli/azure/install-azure-cli))
+4. Access to a Kubernetes cluster with a DocumentDB-compatible workload (see section 2 below)
 
 ---
 
@@ -20,11 +21,53 @@
 
 ---
 
-### 2. A Kubernetes cluster or Azure DocumentDB cluster
+### 2. A Kubernetes cluster with DocumentDB
 
-- Use your own, but if you need help:
-    - **Kubernetes (with DocumentDB workload):**
-        - `<kubeconfig / access details will be shared separately>`
+Choose **one** of the options below.
+
+#### Option A: Use a shared AKS cluster (recommended for the bug bash)
+
+We have a pre-provisioned AKS cluster with DocumentDB deployed via the DocumentDB Kubernetes Operator (DKO). To get access:
+
+1. Sign in to Azure CLI:
+   ```bash
+   az login
+   ```
+2. Get credentials for the shared cluster (details will be shared on Teams):
+   ```bash
+   az aks get-credentials \
+     --resource-group <RESOURCE_GROUP> \
+     --name <AKS_CLUSTER_NAME> \
+     --subscription <SUBSCRIPTION>
+   ```
+3. Verify access:
+   ```bash
+   kubectl get namespaces
+   ```
+
+> If `az aks get-credentials` does not work for you, ask on Teams for a kubeconfig YAML that you can paste directly into the extension.
+
+#### Option B: Create your own AKS cluster with DKO
+
+Use the [DocumentDB Kubernetes Operator](https://github.com/documentdb/documentdb-kubernetes-operator) automation scripts:
+
+```bash
+git clone https://github.com/documentdb/documentdb-kubernetes-operator.git dko
+cd dko/documentdb-playground/aks-setup/scripts
+az login
+./create-cluster.sh --install-all
+./test-connection.sh
+```
+
+This creates a dev AKS cluster, installs the DKO, and deploys a sample DocumentDB instance. Cleanup when done:
+
+```bash
+./delete-cluster.sh --delete-all
+```
+
+#### Option C: Use a local cluster
+
+Any local Kubernetes cluster (k3d, minikube, Docker Desktop, kind) with a DocumentDB-compatible workload will work. See the [Getting Started guide](https://github.com/microsoft/vscode-documentdb/blob/next/docs/user-manual/service-discovery-kubernetes-getting-started.md) for local cluster setup instructions.
 
 ---
 
