@@ -25,27 +25,41 @@
 
 Choose **one** of the options below.
 
-#### Option A: Use a shared AKS cluster (recommended for the bug bash)
+#### Option A: Use the shared AKS cluster (recommended for the bug bash)
 
-We have a pre-provisioned AKS cluster with DocumentDB deployed via the DocumentDB Kubernetes Operator (DKO). To get access:
+We have a pre-provisioned AKS cluster with DocumentDB deployed via the DocumentDB Kubernetes Operator (DKO).
+
+**Cluster details:**
+- **Resource Group:** `bugbash-090-westus2-rg`
+- **Cluster Name:** `bugbash-090`
+- **Region:** West US 2
+- **Subscription:** Project Everest Test Subscription
+- **DocumentDB namespace:** `documentdb-instance-ns`
+- **Sample data:** `bugbash` database with `products`, `users`, and `events` collections
+
+**To get access via Azure CLI:**
 
 1. Sign in to Azure CLI:
    ```bash
    az login
    ```
-2. Get credentials for the shared cluster (details will be shared on Teams):
+2. Get cluster credentials:
    ```bash
    az aks get-credentials \
-     --resource-group <RESOURCE_GROUP> \
-     --name <AKS_CLUSTER_NAME> \
-     --subscription <SUBSCRIPTION>
+     --resource-group bugbash-090-westus2-rg \
+     --name bugbash-090
    ```
 3. Verify access:
    ```bash
    kubectl get namespaces
+   kubectl get documentdb -n documentdb-instance-ns
    ```
 
-> If `az aks get-credentials` does not work for you, ask on Teams for a kubeconfig YAML that you can paste directly into the extension.
+**Alternative: Paste kubeconfig YAML directly into the extension**
+
+If you cannot use `az aks get-credentials`, use the **Paste kubeconfig YAML from clipboard** option in the extension. The kubeconfig YAML will be shared on Teams.
+
+> **DocumentDB credentials:** Username `docdbadmin` / password `BugBash090!Secure` -- these are pre-filled automatically when connecting via the extension's credential Secret discovery.
 
 #### Option B: Create your own AKS cluster with DKO
 
